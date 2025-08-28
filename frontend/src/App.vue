@@ -59,7 +59,6 @@
                     <tr v-for="entry in leaderboard" :key="entry.name">
                       <td>{{ entry.name }}</td>
                       <td>{{ entry.score }}</td>
-                      <td>{{ entry.timestamp }}</td>
                     </tr>
                 </tbody>
             </table>
