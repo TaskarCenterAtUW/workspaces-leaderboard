@@ -3,10 +3,10 @@ import psycopg2
 
 app = Flask(__name__)
 
-def get_db_connection():
+def get_db_connection(sanitizedWorkspaceId):
     conn = psycopg2.connect(
         host="localhost",
-        database="leaderboard",
+        database="workspace" + "-" + sanitizedWorkspaceId,
         user="postgres",
         password="password"
     )
@@ -15,17 +15,27 @@ def get_db_connection():
 @app.route('/api/leaderboard', methods=['GET'])
 def get_leaderboard():
     '''
-    workspace = request.args.get('filterWorkspace')
+    workspaceId = request.args.get('filterWorkspace')
     time = request.args.get('filterTime')
-    conn = get_db_connection()
+
+    interval = '100 years' // all time
+    match time:
+        case 'week':
+            interval = '1 week'
+        case 'month':
+            interval = '1 month'
+
+    sanitizedWorkspaceId = html.escape(workspaceId)
+    conn = get_db_connection(sanitizedWorkspaceId)
     cursor = conn.cursor()
     query = '''
-        SELECT name, score 
-        FROM leaderboard 
-        WHERE workspace_id = %s  
+        SELECT c.user_id AS name, c.num_changes AS score 
+        FROM changesets c 
+        WHERE c.closed_at >= NOW() - INTERVAL %s 
+        GROUP BY c.user_id 
         ORDER BY score DESC;
     '''
-    cursor.execute(query, (workspace))
+    cursor.execute(query, (interval))
     rows = cursor.fetchall()
     cursor.close()
     conn.close()

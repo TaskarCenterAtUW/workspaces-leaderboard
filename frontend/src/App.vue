@@ -15,7 +15,7 @@
         <div class="row justify-content-center">
             <div class="col mb-3">
                 <select class="form-select" aria-label="Filter by Workspace" v-model="filterWorkspace">
-                    <option value="1">Seattle Design Festival 2025</option>
+                    <option value="125">Seattle Design Festival 2025</option>
                 </select>
             </div>
             <div class="col mb-3">
@@ -43,12 +43,12 @@
                 <tbody>
                     <tr style="background-color: #FFD700">
                         <td>1</td>
-                        <td>Ostentatious Otters</td>
+                        <td>Gorgeous Gophers</td>
                         <td>2850</td>
                     </tr>
                     <tr style="background-color: #C0C0C0">
                         <td>2</td>
-                        <td>Brave Badgers</td>
+                        <td>Tricksy Tigers</td>
                         <td>2400</td>
                     </tr>
                     <tr style="background-color: #e1b284;">
@@ -57,6 +57,7 @@
                         <td>2300</td>
                     </tr>
                     <tr v-for="entry in leaderboard" :key="entry.name">
+                      <td></td>
                       <td>{{ entry.name }}</td>
                       <td>{{ entry.score }}</td>
                     </tr>
