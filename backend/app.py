@@ -28,13 +28,13 @@ def get_leaderboard():
     sanitizedWorkspaceId = html.escape(workspaceId)
     conn = get_db_connection(sanitizedWorkspaceId)
     cursor = conn.cursor()
-    query = '''
+    query = '
         SELECT c.user_id AS name, c.num_changes AS score 
         FROM changesets c 
         WHERE c.closed_at >= NOW() - INTERVAL %s 
         GROUP BY c.user_id 
         ORDER BY score DESC;
-    '''
+    '
     cursor.execute(query, (interval))
     rows = cursor.fetchall()
     cursor.close()
