@@ -1,11 +1,17 @@
 FROM node:16 as builder
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install
+WORKDIR /app/
 COPY . .
-RUN npm run build
+RUN npm install
 
 FROM nginx:alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=builder /app/.output/public /usr/share/nginx/html/
+
+# https://stackoverflow.com/questions/44438637/arg-substitution-in-run-command-not-working-for-dockerfile
+ARG CODE_VERSION
+
+RUN echo "This is (leaderboard) $CODE_VERSION"
+RUN echo "This is (leaderboard) $CODE_VERSION" > /usr/share/nginx/html/VERSION
+
+RUN chown -R nginx:nginx /usr/share/nginx/html/
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
