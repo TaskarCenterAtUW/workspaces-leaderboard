@@ -4,7 +4,7 @@ COPY . .
 RUN npm install
 
 FROM nginx:alpine
-COPY --from=builder /app/.output/public /usr/share/nginx/html/
+COPY --from=builder /app/dist /usr/share/nginx/html/
 
 # https://stackoverflow.com/questions/44438637/arg-substitution-in-run-command-not-working-for-dockerfile
 ARG CODE_VERSION
