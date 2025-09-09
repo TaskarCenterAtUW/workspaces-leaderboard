@@ -1,14 +1,5 @@
 <template>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container my-4">
+    <div id="app" class="container my-4">
         <h1 class="text-center mb-4">TCAT Leaderboard</h1>
 
         <!-- Filters -->
@@ -26,7 +17,7 @@
                 </select>
             </div>
             <div class="col mb-3">
-              <button class="btn btn-primary" @click="fetchLeaderboard">Filter</button>
+            <button class="btn btn-primary" @click="fetchLeaderboard">Filter</button>
             </div>
         </div>
 
@@ -57,42 +48,39 @@
                         <td>2300</td>
                     </tr>
                     <tr v-for="entry in leaderboard" :key="entry.name">
-                      <td></td>
-                      <td>{{ entry.name }}</td>
-                      <td>{{ entry.score }}</td>
+                    <td></td>
+                    <td>{{ entry.name }}</td>
+                    <td>{{ entry.score }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      leaderboard: [],
-      filterTime: '',
-      filterWorkspace: ''
-    };
-  },
-  methods: {
-    fetchLeaderboard() {
-      const params = new URLSearchParams({
-        filterTime: this.filterTime,
-        filterWorkspace: this.filterWorkspace
-      });
-      fetch(`/api/leaderboard?${params.toString()}`)
-        .then(response => response.json())
-        .then(data => {
-          this.leaderboard = data;
-        });
+    name: 'app',
+    data() {
+        return {
+            leaderboard: [],
+            filterTime: '',
+            filterWorkspace: ''
+        };
+    },
+    methods: {
+        fetchLeaderboard() {
+            const params = new URLSearchParams({
+                filterTime: this.filterTime,
+                filterWorkspace: this.filterWorkspace
+            });
+            fetch(`/api/leaderboard?${params.toString()}`)
+                .then(response => response.json())
+                .then(data => {
+                this.leaderboard = data;
+                });
+        }
     }
-  }
 };
 </script>
 
