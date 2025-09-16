@@ -4,19 +4,19 @@
 
         <!-- Filters -->
         <div class="row justify-content-center">
-            <div class="col mb-3">
+            <div class="col-7 mb-3">
                 <select class="form-select" aria-label="Filter by Workspace" v-model="filterWorkspace">
                     <option value="125">Seattle Design Festival 2025</option>
                 </select>
             </div>
-            <div class="col mb-3">
+            <div class="col-3 mb-3">
                 <select class="form-select" aria-label="Filter by Time Range" v-model="filterTime">
                     <option value="all">All Time</option>
                     <option value="month">Last Month</option>
                     <option value="week">Last Week</option>
                 </select>
             </div>
-            <div class="col mb-3">
+            <div class="col-2 mb-3">
             <button class="btn btn-primary" @click="fetchLeaderboard">Filter</button>
             </div>
         </div>
@@ -69,6 +69,14 @@ export default {
     },
     methods: {
         fetchLeaderboard() {
+            this.leaderboard = [
+                { "name": "Ostentatious Otters", "score": 1500 },
+                { "name": "Bouncy Birbs", "score": 1400 },
+                { "name": "Cute Capybaras", "score": 1350 },
+                { "name": "Delightful Ducks", "score": 1300 },
+                { "name": "Eager Elephants", "score": 1250 }
+            ];
+            /**
             const params = new URLSearchParams({
                 filterTime: this.filterTime,
                 filterWorkspace: this.filterWorkspace
@@ -78,6 +86,7 @@ export default {
                 .then(data => {
                 this.leaderboard = data;
                 });
+            */
         }
     }
 };

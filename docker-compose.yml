@@ -1,26 +1,21 @@
 version: '3.8'
 
 services:
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+  frontend-dev:
+    command: bash
+    image: node:latest
     ports:
-      - "8080:80"
+      - "5173:5173"
+    user: "501:501"
     volumes:
-      - ./frontend:/usr/share/nginx/html:ro
-    networks:
-      - leaderboard-network
-
+      - ./frontend:/app
+  
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
-    networks:
-      - leaderboard-network
+      - "5001:5000"
 
-networks:
-  leaderboard-network:
+
 
