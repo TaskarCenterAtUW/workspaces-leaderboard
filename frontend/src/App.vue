@@ -93,21 +93,8 @@ export default {
 </script>
 
 <style>
-/**
-.container {
-  max-width: 100%;
-  padding: 15px;
+.table {
+    --bs-table-color: initial;
+    --bs-table-bg: initial;
 }
-.table-responsive {
-  overflow-x: auto;
-}
-@media (max-width: 768px) {
-  h1 {
-    font-size: 1.5rem;
-  }
-  .btn {
-    width: 100%;
-  }
-}
-*/
 </style>
