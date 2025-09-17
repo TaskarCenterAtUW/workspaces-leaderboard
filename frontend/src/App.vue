@@ -1,6 +1,10 @@
 <template>
     <div id="app" class="container my-4">
-        <h1 class="text-center mb-4">TCAT Leaderboard</h1>
+        <h1 class="text-center mb-2">
+            <img src="/cropped-tcat-logo_sm.png" alt="Logo" />
+            LEADERBOARD
+        </h1>
+        <h5 class="text-center mb-5">The Taskar Center for Accessible Technology</h5>
 
         <!-- Filters -->
         <div class="row justify-content-center">
@@ -32,25 +36,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr style="background-color: #FFD700">
-                        <td>1</td>
-                        <td>Gorgeous Gophers</td>
-                        <td>2850</td>
-                    </tr>
-                    <tr style="background-color: #C0C0C0">
-                        <td>2</td>
-                        <td>Tricksy Tigers</td>
-                        <td>2400</td>
-                    </tr>
-                    <tr style="background-color: #e1b284;">
-                        <td>3</td>
-                        <td>Swift Swans</td>
-                        <td>2300</td>
-                    </tr>
-                    <tr v-for="entry in leaderboard" :key="entry.name">
-                    <td></td>
-                    <td>{{ entry.name }}</td>
-                    <td>{{ entry.score }}</td>
+                    <tr v-for="(result, index) in leaderboard" :key="result.name" :id="`result-${++index}`">
+                        <td>{{ index }}</td>
+                        <td>{{ result.name }}</td>
+                        <td>{{ result.score }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -70,6 +59,11 @@ export default {
     methods: {
         fetchLeaderboard() {
             this.leaderboard = [
+                { "name": "Gorgeous Gophers", "score": 2850 },
+                { "name": "Tricksy Tigers", "score": 2400 },
+                { "name": "Swift Swans", "score": 2300 },
+                { "name": "Mighty Meerkats", "score": 2200 },
+                { "name": "Brilliant Bears", "score": 1800 },
                 { "name": "Ostentatious Otters", "score": 1500 },
                 { "name": "Bouncy Birbs", "score": 1400 },
                 { "name": "Cute Capybaras", "score": 1350 },
@@ -91,10 +85,3 @@ export default {
     }
 };
 </script>
-
-<style>
-.table {
-    --bs-table-color: initial;
-    --bs-table-bg: initial;
-}
-</style>
