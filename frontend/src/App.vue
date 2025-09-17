@@ -52,8 +52,8 @@ export default {
     data() {
         return {
             leaderboard: [],
-            filterTime: '',
-            filterWorkspace: ''
+            filterTime: 'all',
+            filterWorkspace: '125'
         };
     },
     methods: {
@@ -82,6 +82,9 @@ export default {
                 });
             */
         }
+    },
+    mounted() {
+        this.fetchLeaderboard();
     }
 };
 </script>
