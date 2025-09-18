@@ -13,6 +13,14 @@ h1 {
     --bs-table-bg: initial;
 }
 
+.btn-secondary {
+    background-color: #fff;
+}
+
+input[type="checkbox"] {
+    border-color: #000;
+}
+
 #result-1 {
     background-color: #FFD700
 }

@@ -7,9 +7,29 @@
         <h5 class="text-center mb-5">The Taskar Center for Accessible Technology</h5>
 
         <!-- Filters -->
+        <div :class="{'collapse': true, 'show': isSearchExpanded}">
+            <div class="row">
+                <div class="col-5 mb-3">
+                    <select class="form-select" aria-label="Filter by Project Group" v-model="filterProjectGroup">
+                        <option value="" disabled="disabled">Select a Project Group</option>
+                        <option value="125">TDEI Default</option>
+                        <option value="126">University of Washington</option>
+                    </select>
+                </div>
+                <div class="col-7 mb-3 d-flex align-items-center">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" v-model="filterQuestsOnly" id="checkboxQuests" aria-label="Filter by Quests Only" >
+                        <label class="form-check-label" for="checkboxQuests">
+                            Workspaces with Quests Only
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row justify-content-center">
-            <div class="col-7 mb-3">
+            <div class="col-6 mb-3">
                 <select class="form-select" aria-label="Filter by Workspace" v-model="filterWorkspace">
+                    <option value="" disabled="disabled">Select a Workspace</option>
                     <option value="125">Seattle Design Festival 2025</option>
                 </select>
             </div>
@@ -21,7 +41,10 @@
                 </select>
             </div>
             <div class="col-2 mb-3">
-            <button class="btn btn-primary" @click="fetchLeaderboard">Filter</button>
+                <button class="btn btn-primary" @click="fetchLeaderboard">Filter</button>
+            </div>
+            <div class="col-1 mb-3">
+                <button class="btn btn-secondary" @click="toggleSearchCollapse" :aria-expanded="isSearchExpanded ? 'true' : 'false'"><img src="/filter-32-32.png" style="height: 24px;" /></button>
             </div>
         </div>
 
@@ -53,7 +76,10 @@ export default {
         return {
             leaderboard: [],
             filterTime: 'all',
-            filterWorkspace: '125'
+            filterProjectGroup: '125',
+            filterQuestsOnly: false,
+            filterWorkspace: '125',
+            isSearchExpanded: false
         };
     },
     methods: {
@@ -81,6 +107,9 @@ export default {
                 this.leaderboard = data;
                 });
             */
+        },
+        toggleSearchCollapse() {
+            this.isSearchExpanded = !this.isSearchExpanded;
         }
     },
     mounted() {
