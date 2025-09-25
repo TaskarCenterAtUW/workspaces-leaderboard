@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import os, psycopg2
+import html, os, psycopg2
 
 app = Flask(__name__)
 
@@ -32,13 +32,14 @@ def get_leaderboard():
     sanitizedWorkspaceId = html.escape(workspaceId)
     conn = get_db_connection(sanitizedWorkspaceId)
     cursor = conn.cursor()
-    query = '
+    query = """
         SELECT u.display_name AS name, c.num_changes AS score 
         FROM changesets c 
         INNER JOIN users u ON c.user_id = u.id
         WHERE c.closed_at >= NOW() - INTERVAL %s 
         GROUP BY c.user_id 
-        ORDER BY score DESC'
+        ORDER BY score DESC
+    """
     
     cursor.execute(query, (interval))
     rows = cursor.fetchall()
