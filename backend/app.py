@@ -4,15 +4,15 @@ import html, os, psycopg2
 app = Flask(__name__)
 
 # Access the environment variable
-db_dbname = os.environ.get("WS_OSM_DB_NAME")
 db_host = os.environ.get("WS_OSM_DB_HOST")
-db_user = os.environ.get("WS_OSM_DB_USER")
+db_name = os.environ.get("WS_OSM_DB_NAME")
 db_password = os.environ.get("WS_OSM_DB_PASS")
+db_user = os.environ.get("WS_OSM_DB_USER")
 
-def get_db_connection(sanitizedWorkspaceId):
+def get_db_connection():
     conn = psycopg2.connect(
         host=db_host,
-        database=db_dbname,
+        database=db_name,
         user=db_user,
         password=db_password
     )
@@ -23,19 +23,12 @@ def get_leaderboard():
     workspaceId = request.args.get('filterWorkspace')
     time = request.args.get('filterTime')
 
-    interval = '100 years'
-    match time:
-        case 'week':
-            interval = '1 week'
-        case 'month':
-            interval = '1 month'
-
-    sanitizedWorkspaceId = html.escape(workspaceId)
-    conn = get_db_connection(sanitizedWorkspaceId)
+    conn = get_db_connection()
     cursor = conn.cursor()
 
-    schema_query = "SET search_path TO workspace-{sanitizedWorkspaceId}, public;"
-    cursor.execute(schema_query)
+    schema_query = "SET search_path TO %s, public;"
+    schemaId = "workspace-" + html.escape(workspaceId)
+    cursor.execute(schema_query, (schemaId))
 
     query = """
         SELECT u.display_name AS name, c.num_changes AS score 
@@ -46,6 +39,13 @@ def get_leaderboard():
         ORDER BY score DESC;
     """
     
+    interval = '100 years'
+    match time:
+        case 'week':
+            interval = '1 week'
+        case 'month':
+            interval = '1 month'
+
     cursor.execute(query, (interval))
     rows = cursor.fetchall()
     cursor.close()
