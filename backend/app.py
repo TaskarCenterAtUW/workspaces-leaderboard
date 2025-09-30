@@ -28,14 +28,14 @@ def get_leaderboard():
 
     schema_query = "SET search_path TO %s, public;"
     schemaId = "workspace-" + html.escape(workspaceId)
-    cursor.execute(schema_query, (schemaId))
+    cursor.execute(schema_query, (schemaId,))
 
     query = """
-        SELECT u.display_name AS name, c.num_changes AS score 
+        SELECT u.display_name AS name, SUM(c.num_changes) AS score 
         FROM changesets c 
         INNER JOIN users u ON c.user_id = u.id
         WHERE c.closed_at >= NOW() - INTERVAL %s 
-        GROUP BY c.user_id 
+        GROUP BY display_name
         ORDER BY score DESC;
     """
     
@@ -46,7 +46,7 @@ def get_leaderboard():
         case 'month':
             interval = '1 month'
 
-    cursor.execute(query, (interval))
+    cursor.execute(query, (interval,))
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
