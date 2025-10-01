@@ -1,56 +1,14 @@
-from flask import Flask, request, jsonify
-import html, os, psycopg2
+from flask import Flask
+from leaderboard.routes import leaderboard_bp
+from extensions import get_db_connection, close_db_connection  # Import database utilities
 
 app = Flask(__name__)
 
-# Access the environment variable
-db_host = os.environ.get("WS_OSM_DB_HOST")
-db_name = os.environ.get("WS_OSM_DB_NAME")
-db_password = os.environ.get("WS_OSM_DB_PASS")
-db_user = os.environ.get("WS_OSM_DB_USER")
+# Register the leaderboard blueprint
+app.register_blueprint(leaderboard_bp, url_prefix='/api/leaderboard')
 
-def get_db_connection():
-    conn = psycopg2.connect(
-        host=db_host,
-        database=db_name,
-        user=db_user,
-        password=db_password
-    )
-    return conn
-
-@app.route('/api/leaderboard', methods=['GET'])
-def get_leaderboard():
-    workspaceId = request.args.get('filterWorkspace')
-    time = request.args.get('filterTime')
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    schema_query = "SET search_path TO %s, public;"
-    schemaId = "workspace-" + html.escape(workspaceId)
-    cursor.execute(schema_query, (schemaId,))
-
-    query = """
-        SELECT u.display_name AS name, SUM(c.num_changes) AS score 
-        FROM changesets c 
-        INNER JOIN users u ON c.user_id = u.id
-        WHERE c.closed_at >= NOW() - INTERVAL %s 
-        GROUP BY display_name
-        ORDER BY score DESC;
-    """
-    
-    interval = '100 years'
-    match time:
-        case 'week':
-            interval = '1 week'
-        case 'month':
-            interval = '1 month'
-
-    cursor.execute(query, (interval,))
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return jsonify([{'name': row[0], 'score': row[1]} for row in rows])
+# Ensure the database connection is closed after each request
+app.teardown_appcontext(close_db_connection)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
