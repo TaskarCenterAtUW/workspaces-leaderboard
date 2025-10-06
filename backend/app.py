@@ -1,10 +1,10 @@
 from flask import Flask
 from leaderboard.routes import leaderboard_bp
-from extensions import get_db_connection, close_db_connection  # Import database utilities
+from extensions import get_db_connection, close_db_connection
 
 app = Flask(__name__)
 
-# Register the leaderboard blueprint
+# Register the blueprints
 app.register_blueprint(leaderboard_bp, url_prefix='/api/leaderboard')
 
 # Ensure the database connection is closed after each request

@@ -1,4 +1,4 @@
-FROM node as builder
+FROM node:trixie as builder
 WORKDIR /app/
 COPY . .
 RUN npm install

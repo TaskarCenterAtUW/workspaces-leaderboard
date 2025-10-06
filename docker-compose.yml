@@ -3,7 +3,7 @@ version: '3.8'
 services:
   frontend-dev:
     command: bash
-    image: node:latest
+    image: node:trixie
     ports:
       - "5173:5173"
     user: "501:501"
