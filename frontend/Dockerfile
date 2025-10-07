@@ -1,4 +1,10 @@
-FROM node:trixie as builder
+FROM node:latest as builder
+
+ARG VITE_TDEI_API_URL
+ARG VITE_TDEI_USER_API_URL
+ARG VITE_API_URL
+ARG VITE_OSM_URL
+
 WORKDIR /app/
 COPY . .
 RUN npm install

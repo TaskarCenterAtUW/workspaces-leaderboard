@@ -2,13 +2,21 @@ version: '3.8'
 
 services:
   frontend-dev:
+    image: node:latest
     command: bash
-    image: node:trixie
+    working_dir: /app
     ports:
       - "5173:5173"
     user: "501:501"
     volumes:
       - ./frontend:/app
+    environment:
+      VITE_TDEI_API_URL: ${WS_TDEI_API_URL}
+      VITE_TDEI_USER_API_URL: ${WS_TDEI_BACKEND_URL}
+      VITE_API_URL: ${WS_API_URL}
+      VITE_OSM_URL: ${WS_OSM_URL}
+      VITE_RAPID_URL: ${WS_RAPID_URL}
+      VITE_PATHWAYS_EDITOR_URL: ${WS_PATHWAYS_EDITOR_URL}
   
   backend:
     build:
