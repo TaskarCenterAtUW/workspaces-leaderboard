@@ -10,21 +10,30 @@ export const useAuthStore = defineStore('auth', {
     }),
     actions: {
         async login(username, password) {
-            try {
-                const tdeiApiUrl = import.meta.env.VITE_TDEI_API_URL;
-          
-                response = await fetch(tdeiApiUrl + '/authenticate', 'POST', { username, password });
-                const user = await response.json();
-                this.user = user;
+            const tdeiApiUrl = import.meta.env.VITE_TDEI_API_URL;
+            const requestBody = {
+                username: username,
+                password: password
+            };
+            const jsonBody = JSON.stringify(requestBody);
 
-                // store user details and jwt in local storage to keep user logged in between page refreshes
-                localStorage.setItem('user', JSON.stringify(user));
+            const response = await fetch(tdeiApiUrl + 'authenticate', {
+                method: 'POST', 
+                body: jsonBody
+            });
 
-                // redirect to previous url or default to home page
-                router.push(this.returnUrl || '/');
-              } catch (e) {
-                throw e(response);
-              }
+            if (!response.ok) {
+                throw new Error('Login failed');
+            }
+
+            const user = await response.json();
+            this.user = user;
+
+            // store user details and jwt in local storage to keep user logged in between page refreshes
+            localStorage.setItem('user', JSON.stringify(user));
+
+            // redirect to previous url or default to home page
+            router.push(this.returnUrl || '/');
         },
         logout() {
             this.user = null;
