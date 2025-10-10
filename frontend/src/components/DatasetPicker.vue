@@ -28,7 +28,7 @@
   watch(projectGroupId, (val) => refreshDatasets(val));
 
   async function refreshDatasets(projectGroupId: string) {
-    datasets.value = (await tdeiClient.getDatasetsByProjectGroupAndName(projectGroupId, ''))
+    datasets.value = (await tdeiClient.getDatasetsByProjectGroup(projectGroupId))
         .sort((a, b) => a.name.localeCompare(b.name));
 
     if (datasets.value.length === 0) {

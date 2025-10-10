@@ -67,7 +67,7 @@
 import { ref, onMounted } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 
-const filterProjectGroup = ref(null);
+const filterProjectGroup = ref('null');
 const filterWorkspace = ref({});
 const filterTime = ref('all');
 const filterQuestsOnly = ref(false);
