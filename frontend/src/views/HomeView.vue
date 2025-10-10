@@ -2,13 +2,12 @@
     <!-- Filters -->
     <div :class="{'collapse': true, 'show': isSearchExpanded}">
         <div class="row">
+            <Suspense>
             <div class="col-5 mb-3">
-                <select class="form-select" aria-label="Filter by Project Group" v-model="filterProjectGroup">
-                    <option value="" disabled="disabled">Select a Project Group</option>
-                    <option value="125">TDEI Default</option>
-                    <option value="126">University of Washington</option>
-                </select>
+                <label for="ws_project_group_picker">Project Group</label>
+                <project-group-picker v-model="filterProjectGroup" id="ws_project_group_picker" />
             </div>
+            </Suspense>
             <div class="col-7 mb-3 d-flex align-items-center">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="" v-model="filterQuestsOnly" id="checkboxQuests" aria-label="Filter by Quests Only" >
@@ -62,52 +61,50 @@
     </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 
-export default {
-    data() {
-        return {
-            leaderboard: [],
-            filterTime: 'all',
-            filterProjectGroup: '125',
-            filterQuestsOnly: false,
-            filterWorkspace: '125',
-            isSearchExpanded: false
-        };
-    },
-    methods: {
-        fetchLeaderboard() {
-            this.leaderboard = [
-                { "name": "Gorgeous Gophers", "score": 2850 },
-                { "name": "Tricksy Tigers", "score": 2400 },
-                { "name": "Swift Swans", "score": 2300 },
-                { "name": "Mighty Meerkats", "score": 2200 },
-                { "name": "Brilliant Bears", "score": 1800 },
-                { "name": "Ostentatious Otters", "score": 1500 },
-                { "name": "Bouncy Birbs", "score": 1400 },
-                { "name": "Cute Capybaras", "score": 1350 },
-                { "name": "Delightful Ducks", "score": 1300 },
-                { "name": "Eager Elephants", "score": 1250 }
-            ];
-            /**
-            const params = new URLSearchParams({
-                filterTime: this.filterTime,
-                filterWorkspace: this.filterWorkspace
-            });
-            fetch(`/api/leaderboard?${params.toString()}`)
-                .then(response => response.json())
-                .then(data => {
-                this.leaderboard = data;
-                });
-            */
-        },
-        toggleSearchCollapse() {
-            this.isSearchExpanded = !this.isSearchExpanded;
-        }
-    },
-    mounted() {
-        this.fetchLeaderboard();
-    }
-};
+const filterProjectGroup = ref(null);
+const filterWorkspace = ref({});
+const filterTime = ref('all');
+const filterQuestsOnly = ref(false);
+const isSearchExpanded = ref(true);
+const leaderboard = ref([]);
+
+function fetchLeaderboard() {
+    leaderboard.value = [
+        { "name": "Gorgeous Gophers", "score": 2850 },
+        { "name": "Tricksy Tigers", "score": 2400 },
+        { "name": "Swift Swans", "score": 2300 },
+        { "name": "Mighty Meerkats", "score": 2200 },
+        { "name": "Brilliant Bears", "score": 1800 },
+        { "name": "Ostentatious Otters", "score": 1500 },
+        { "name": "Bouncy Birbs", "score": 1400 },
+        { "name": "Cute Capybaras", "score": 1350 },
+        { "name": "Delightful Ducks", "score": 1300 },
+        { "name": "Eager Elephants", "score": 1250 }
+    ];
+}
+
+function toggleSearchCollapse() {
+    isSearchExpanded.value = !isSearchExpanded.value;
+}
+
+onMounted(() => {
+    fetchLeaderboard();
+});
+
+/**
+const params = new URLSearchParams({
+    filterTime: this.filterTime,
+    filterWorkspace: this.filterWorkspace
+});
+fetch(`/api/leaderboard?${params.toString()}`)
+    .then(response => response.json())
+    .then(data => {
+    this.leaderboard = data;
+    });
+*/
+
 </script>
