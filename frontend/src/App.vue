@@ -4,7 +4,7 @@
             <img src="/cropped-tcat-logo_sm.png" alt="Logo" />
             LEADERBOARD
         </h1>
-        <h5 class="text-center mb-1">The Taskar Center for Accessible Technology</h5>
+        <h5 class="text-center mb-2">The Taskar Center for Accessible Technology</h5>
         <div v-if="auth.username" class="container-fluid text-center">
             <span>Welcome, {{ auth.username }}!&nbsp;&nbsp;</span>
             <a @click="signOut()" class="pl-3"> 
