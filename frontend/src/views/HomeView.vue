@@ -20,10 +20,12 @@
     </div>
     <div class="row justify-content-center">
         <div class="col-6 mb-3">
-            <select class="form-select" aria-label="Filter by Workspace" v-model="filterWorkspace">
-                <option value="" disabled="disabled">Select a Workspace</option>
-                <option value="125">Seattle Design Festival 2025</option>
-            </select>
+            <label for="ws_dataset_picker">Workspace</label>
+            <dataset-picker
+                id="ws_dataset_picker"
+                v-model="filterWorkspace"
+                :project-group-id="filterProjectGroup"
+            />
         </div>
         <div class="col-3 mb-3">
             <select class="form-select" aria-label="Filter by Time Range" v-model="filterTime">
