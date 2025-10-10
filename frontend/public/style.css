@@ -8,6 +8,10 @@ h1 {
     letter-spacing: 5px;
 }
 
+a {
+    cursor: pointer;
+}
+
 .table {
     --bs-table-color: initial;
     --bs-table-bg: initial;
