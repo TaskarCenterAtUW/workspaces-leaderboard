@@ -4,6 +4,7 @@
       class="dataset-picker form-select"
       aria-label="Dataset Selection"
     >
+      <option v-if="datasets.length === 0" disabled value="">No Workspaces exist in this Project Group</option>
       <option v-for="ds in datasets" :key="ds.id" :value="ds.id" >
         {{ ds.name }} (version {{ ds.version }})
       </option>

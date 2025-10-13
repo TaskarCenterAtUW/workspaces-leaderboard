@@ -17,6 +17,7 @@ services:
       VITE_OSM_URL: ${WS_OSM_URL}
       VITE_RAPID_URL: ${WS_RAPID_URL}
       VITE_PATHWAYS_EDITOR_URL: ${WS_PATHWAYS_EDITOR_URL}
+      VITE_LEADERBOARD_API_URL: ${WS_LEADERBOARD_API_URL}
   
   backend:
     build:
@@ -25,7 +26,7 @@ services:
     ports:
       - "5001:5000"
     env_file:
-      - dev.env
+      - .env
 
 
 
