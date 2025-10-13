@@ -6,14 +6,14 @@
     >
       <option v-if="datasets.length === 0" disabled value="">No Workspaces exist in this Project Group</option>
       <option v-for="ds in datasets" :key="ds.id" :value="ds.id" >
-        {{ ds.name }} (version {{ ds.version }})
+        {{ ds.title }}
       </option>
     </select>
 </template>
 
 <script setup lang="ts">
   import { ref, toRefs, watch } from 'vue';
-  import { tdeiClient } from '@/services/index'
+  import { workspacesClient } from '@/services/index'
   
   const model = defineModel({ required: true });
   const props = defineProps({
@@ -29,9 +29,9 @@
   watch(projectGroupId, (val) => refreshDatasets(val));
 
   async function refreshDatasets(projectGroupId: string) {
-    datasets.value = (await tdeiClient.getDatasetsByProjectGroup(projectGroupId))
-        .sort((a, b) => a.name.localeCompare(b.name));
 
+    const workspaces = (await workspacesClient.getMyWorkspaces());
+    datasets.value = workspaces.filter(item => item.tdeiProjectGroupId === projectGroupId).sort((a, b) => a.title.localeCompare(b.title));
     if (datasets.value.length === 0) {
         model.value = null;
     }
