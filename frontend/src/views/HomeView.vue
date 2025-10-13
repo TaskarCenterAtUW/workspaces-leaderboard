@@ -31,8 +31,11 @@
     </div>
 
     <!-- Leaderboard Table -->
-    <div v-if="leaderboard.length === 0" class="alert alert-warning" role="alert">
+    <div v-if="!filterWorkspace" class="alert alert-warning" role="alert">
         Please select a Workspace to view the Leaderboard.
+    </div>
+    <div v-else-if="leaderboard.length === 0" class="alert alert-info" role="alert">
+        No results found for the selected filters.
     </div>
     <div v-else class="table-responsive">
         <table class="table table-striped table-bordered">
