@@ -7,6 +7,13 @@
             <project-group-picker v-model="filterProjectGroup" id="ws_project_group_picker" />
         </div>
         </Suspense>
+        <div class="col-12 col-md-5 col-lg-5 mb-3">
+            <label for="filterTeam">Show Rankings</label>
+            <select id="filterTeam" class="form-select" aria-label="Show Team or Individual Rankings" v-model="filterTeam">
+                <option value="team">By Team</option>
+                <option value="individual">By Individual</option>
+            </select>
+        </div>
     </div>
     <div class="row">
         <div class="col-12 col-md-7 col-lg-7 mb-3">
@@ -63,6 +70,7 @@ import { RouterLink, RouterView } from 'vue-router';
 
 const filterProjectGroup = ref('null');
 const filterWorkspace = ref('');
+const filterTeam = ref('team');
 const filterTime = ref('all');
 const isSearchExpanded = ref(true);
 const leaderboard = ref([]);
