@@ -94,7 +94,7 @@ function toggleSearchCollapse() {
 }
 
 onMounted(() => {
-    fetchLeaderboard();
+    //fetchLeaderboard();
 });
 
 </script>
