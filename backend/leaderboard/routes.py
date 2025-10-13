@@ -1,8 +1,10 @@
 from flask import Blueprint, request, jsonify
+from flask_cors import CORS
 from extensions import get_db_connection  # Use the global database connection
 import html
 
 leaderboard_bp = Blueprint('leaderboard', __name__)
+CORS(leaderboard_bp)
 
 @leaderboard_bp.route('/', methods=['GET'])
 def get_leaderboard():

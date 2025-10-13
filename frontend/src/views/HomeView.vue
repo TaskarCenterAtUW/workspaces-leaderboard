@@ -68,7 +68,7 @@ const isSearchExpanded = ref(true);
 const leaderboard = ref([]);
 
 function fetchLeaderboard() {
-    if (!filterWorkspace.value || Object.keys(filterWorkspace.value).length === 0) {
+    if (!filterWorkspace) {
         leaderboard.value = [];
         return;
     }

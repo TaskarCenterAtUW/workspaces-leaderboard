@@ -1,8 +1,10 @@
 from flask import Flask
+from flask_cors import CORS
 from leaderboard.routes import leaderboard_bp
 from extensions import get_db_connection, close_db_connection
 
 app = Flask(__name__)
+CORS(app)
 
 # Register the blueprints
 app.register_blueprint(leaderboard_bp, url_prefix='/api/leaderboard')
