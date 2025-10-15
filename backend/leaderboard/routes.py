@@ -33,6 +33,8 @@ def get_leaderboard():
             interval = '1 week'
         case 'month':
             interval = '1 month'
+        case 'day':
+            interval = '1 day'
 
     cursor.execute(query, (interval,))
     rows = cursor.fetchall()

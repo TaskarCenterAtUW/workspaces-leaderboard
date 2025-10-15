@@ -1,47 +1,52 @@
 <template>
     <!-- Filters -->
-    <div class="row">
-        <Suspense>
-        <div class="col-12 col-md-7 col-lg-7 mb-3">
-            <label for="ws_project_group_picker">Project Group</label>
-            <project-group-picker v-model="filterProjectGroup" id="ws_project_group_picker" />
+    <Suspense>
+    <div>
+        <div class="row">
+            <div class="col-12 col-md-8 col-lg-8 mb-3">
+                <label for="ws_project_group_picker">Project Group</label>
+                <project-group-picker v-model="filterProjectGroup" id="ws_project_group_picker" />
+            </div>
+            <div class="col-12 col-md-4 col-lg-4 mb-3">
+                <label for="filterTeam">Show Rankings</label>
+                <select id="filterTeam" class="form-select" aria-label="Show Team or Individual Rankings" v-model="filterTeam" @change="fetchLeaderboard">
+                    <option disabled value="team">By Team</option>
+                    <option value="individual">By Individual</option>
+                </select>
+            </div>
         </div>
-        </Suspense>
-        <div class="col-12 col-md-5 col-lg-5 mb-3">
-            <label for="filterTeam">Show Rankings</label>
-            <select id="filterTeam" class="form-select" aria-label="Show Team or Individual Rankings" v-model="filterTeam">
-                <option value="team">By Team</option>
-                <option value="individual">By Individual</option>
-            </select>
+        <div class="row">
+            <div class="col-12 col-md-8 col-lg-8 mb-3">
+                <label for="ws_workspace_picker">Workspace</label>
+                <workspace-picker
+                    id="ws_workspace_picker"
+                    v-model="filterWorkspace"
+                    :project-group-id="filterProjectGroup"
+                    @filterChangeEvent="fetchLeaderboard"
+                />
+            </div>
+            <div class="col-12 col-md-4 col-lg-4 mb-3">
+                <label for="filterTime">Time Range</label>
+                <select id="filterTime" class="form-select" aria-label="Filter by Time Range" v-model="filterTime" @change="fetchLeaderboard">
+                    <option value="all">All Time</option>
+                    <option value="month">Last Month</option>
+                    <option value="week">Last Week</option>
+                    <option value="day">Last Day</option>
+                </select>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12 col-md-7 col-lg-7 mb-3">
-            <label for="ws_dataset_picker">Workspace</label>
-            <dataset-picker
-                id="ws_dataset_picker"
-                v-model="filterWorkspace"
-                :project-group-id="filterProjectGroup"
-            />
-        </div>
-        <div class="col-12 col-md-3 col-lg-3 mb-3">
-            <label for="filterTime">Time Range</label>
-            <select id="filterTime" class="form-select" aria-label="Filter by Time Range" v-model="filterTime">
-                <option value="all">All Time</option>
-                <option value="month">Last Month</option>
-                <option value="week">Last Week</option>
-            </select>
-        </div>
-        <div class="col-12 col-md-2 col-lg-2 mb-3 mt-auto">
-            <button class="btn btn-primary me-2" @click="fetchLeaderboard">Filter</button>
-        </div>
-    </div>
+    </Suspense>
 
     <!-- Leaderboard Table -->
-    <div v-if="!filterWorkspace" class="alert alert-warning" role="alert">
+    <div v-if="loading.active" class="alert alert-info" role="alert">
+        <app-spinner size="sm" />
+        Loading leaderboard...
+    </div>
+    <div v-else-if="!filterWorkspace" class="alert alert-warning" role="alert">
         Please select a Workspace to view the Leaderboard.
     </div>
-    <div v-else-if="leaderboard.length === 0" class="alert alert-info" role="alert">
+    <div v-else-if="leaderboard.length === 0" class="alert alert-primary" role="alert">
         No results found for the selected filters.
     </div>
     <div v-else class="table-responsive">
@@ -49,7 +54,8 @@
             <thead style="color: #fff; background-color: #330872;">
                 <tr>
                     <th scope="col">Rank</th>
-                    <th scope="col">Team</th>
+                    <th v-if="filterTeam == 'team'" scope="col">Team</th>
+                    <th v-else scope="col">Username</th>                   
                     <th scope="col">Score</th>
                 </tr>
             </thead>
@@ -65,44 +71,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
+import { LoadingContext } from '@/services/loading';
+import { leaderboardClient } from '@/services/index';
 
 const filterProjectGroup = ref('null');
 const filterWorkspace = ref('');
-const filterTeam = ref('team');
+const filterTeam = ref('individual');
 const filterTime = ref('all');
-const isSearchExpanded = ref(true);
 const leaderboard = ref([]);
+const loading = reactive(new LoadingContext());
 
-function fetchLeaderboard() {
+async function fetchLeaderboard() {
     if (!filterWorkspace) {
         leaderboard.value = [];
         return;
-    }
-
-    let leaderboardApiUrl = import.meta.env.VITE_LEADERBOARD_API_URL;
-    if (!leaderboardApiUrl) {
-        leaderboardApiUrl = 'https://api.' + window.location.hostname + '/api/leaderboard';
     }
 
     const params = new URLSearchParams({
         filterTime: filterTime.value,
         filterWorkspace: filterWorkspace.value
     });
-    fetch(leaderboardApiUrl + `?${params.toString()}`)
-        .then(response => response.json())
-        .then(data => {
-        leaderboard.value = data;
-    });
-}
 
-function toggleSearchCollapse() {
-    isSearchExpanded.value = !isSearchExpanded.value;
+    await loading.wrap(leaderboardClient, async (client) => {
+        leaderboard.value = await client.getLeaderboard(params);
+    })
 }
 
 onMounted(() => {
     //fetchLeaderboard();
 });
-
 </script>
