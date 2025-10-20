@@ -13,12 +13,10 @@ export class LeaderboardClientError extends Error {
 export class LeaderboardClient extends BaseHttpClient implements ICancelableClient {
   constructor(gatewayUrl: string, signal?: AbortSignal) {
     if (!gatewayUrl) {
-        gatewayUrl = 'https://api.' + window.location.hostname + '/api/leaderboard';
+        gatewayUrl = 'https://api.' + window.location.hostname + '/api';
     }
 
     super(gatewayUrl, signal);
-
-    this._requestHeaders['Content-Type'] = 'text/plain';
   }
 
   async _getSimple(paramString: string) {
@@ -32,7 +30,19 @@ export class LeaderboardClient extends BaseHttpClient implements ICancelableClie
   }
 
   async getLeaderboard(params: URLSearchParams): Promise<any> {
-    const response = await this._getSimple(`?${params.toString()}`);
+    const response = await this._getSimple(`/leaderboard?${params.toString()}`);
+
+    return (await response.json());
+  }
+
+  async getProfileMap(params: URLSearchParams): Promise<any> {
+    const response = await this._getSimple(`/leaderboard/profile/map/?${params.toString()}`);
+
+    return (await response.json());
+  }
+
+  async getProfileStats(params: URLSearchParams): Promise<any> {
+    const response = await this._getSimple(`/leaderboard/profile/stats/?${params.toString()}`);
 
     return (await response.json());
   }

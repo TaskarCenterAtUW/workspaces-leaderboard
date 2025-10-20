@@ -19,11 +19,11 @@ def get_leaderboard():
     cursor.execute(schema_query, (schemaId,))
 
     query = """
-        SELECT u.display_name AS name, SUM(c.num_changes) AS score 
+        SELECT u.id AS id, u.display_name AS name, SUM(c.num_changes) AS score 
         FROM changesets c 
         INNER JOIN users u ON c.user_id = u.id
         WHERE c.closed_at >= NOW() - INTERVAL %s 
-        GROUP BY display_name
+        GROUP BY display_name, u.id
         ORDER BY score DESC;
     """
     
@@ -39,4 +39,71 @@ def get_leaderboard():
     cursor.execute(query, (interval,))
     rows = cursor.fetchall()
     cursor.close()
-    return jsonify([{'name': row[0], 'score': row[1]} for row in rows])
+    return jsonify([{'id': row[0], 'name': row[1], 'score': row[2]} for row in rows])
+
+@leaderboard_bp.route('/profile/map/', methods=['GET'])
+def get_profile_map():
+    id = request.args.get('filterId')
+    time = request.args.get('filterTime')
+    workspaceId = request.args.get('filterWorkspace')
+
+    conn = get_db_connection()  # Use the globally available database connection
+    cursor = conn.cursor()
+
+    schema_query = "SET search_path TO %s, public;"
+    schemaId = "workspace-" + html.escape(workspaceId)
+    cursor.execute(schema_query, (schemaId,))
+
+    query = """
+        SELECT c.id, n.latitude, n.longitude
+        FROM changesets c 
+        INNER JOIN node n ON c.id = n.changeset_id
+        WHERE c.closed_at >= NOW() - INTERVAL %s AND c.user_id = %s;
+    """
+    
+    interval = '100 years'
+    match time:
+        case 'week':
+            interval = '1 week'
+        case 'month':
+            interval = '1 month'
+        case 'day':
+            interval = '1 day'
+
+    cursor.execute(query, (interval,id,))
+    rows = cursor.fetchall()
+    cursor.close()
+    return jsonify([{'id': row[0], 'latitude': row[1], 'longitude': row[2]} for row in rows])
+
+@leaderboard_bp.route('/profile/stats/', methods=['GET'])
+def get_profile_stats():
+    id = request.args.get('filterId')
+    time = request.args.get('filterTime')
+    workspaceId = request.args.get('filterWorkspace')
+
+    conn = get_db_connection()  # Use the globally available database connection
+    cursor = conn.cursor()
+
+    schema_query = "SET search_path TO %s, public;"
+    schemaId = "workspace-" + html.escape(workspaceId)
+    cursor.execute(schema_query, (schemaId,))
+
+    query = """
+        SELECT id, display_name AS name
+        FROM users 
+        WHERE id = %s;
+    """
+    
+    interval = '100 years'
+    match time:
+        case 'week':
+            interval = '1 week'
+        case 'month':
+            interval = '1 month'
+        case 'day':
+            interval = '1 day'
+
+    cursor.execute(query, (id,))
+    row = cursor.fetchone()
+    cursor.close()
+    return jsonify({'id': row[0], 'name': row[1]})

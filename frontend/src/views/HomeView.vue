@@ -22,7 +22,6 @@
                     id="ws_workspace_picker"
                     v-model="filterWorkspace"
                     :project-group-id="filterProjectGroup"
-                    @filterChangeEvent="fetchLeaderboard"
                 />
             </div>
             <div class="col-12 col-md-4 col-lg-4 mb-3">
@@ -38,68 +37,25 @@
     </div>
     </Suspense>
 
-    <!-- Leaderboard Table -->
-    <div v-if="loading.active" class="alert alert-info" role="alert">
-        <app-spinner size="sm" />
-        Loading leaderboard...
+    <div v-if="profileId">
+        <ProfileResults v-model="profileId" :filter-team="filterTeam" :filter-time="filterTime" :filter-workspace="filterWorkspace" />
     </div>
-    <div v-else-if="!filterWorkspace" class="alert alert-warning" role="alert">
-        Please select a Workspace to view the Leaderboard.
-    </div>
-    <div v-else-if="leaderboard.length === 0" class="alert alert-primary" role="alert">
-        No results found for the selected filters.
-    </div>
-    <div v-else class="table-responsive">
-        <table class="table table-striped table-bordered">
-            <thead style="color: #fff; background-color: #330872;">
-                <tr>
-                    <th scope="col">Rank</th>
-                    <th v-if="filterTeam == 'team'" scope="col">Team</th>
-                    <th v-else scope="col">Username</th>                   
-                    <th scope="col">Score</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(result, index) in leaderboard" :key="result.name" :id="`result-${++index}`">
-                    <td>{{ index }}</td>
-                    <td>{{ result.name }}</td>
-                    <td>{{ result.score }}</td>
-                </tr>
-            </tbody>
-        </table>
+    <div v-else>
+       <LeaderboardResults v-model="profileId" :filter-team="filterTeam" :filter-time="filterTime" :filter-workspace="filterWorkspace" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref, onMounted, computed } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
-import { LoadingContext } from '@/services/loading';
-import { leaderboardClient } from '@/services/index';
+import LeaderboardResults from '@/components/LeaderboardResults.vue';
+import ProfileResults from '@/components/ProfileResults.vue';
 
 const filterProjectGroup = ref('null');
 const filterWorkspace = ref('');
 const filterTeam = ref('individual');
 const filterTime = ref('all');
-const leaderboard = ref([]);
-const loading = reactive(new LoadingContext());
 
-async function fetchLeaderboard() {
-    if (!filterWorkspace) {
-        leaderboard.value = [];
-        return;
-    }
+const profileId = ref(null);
 
-    const params = new URLSearchParams({
-        filterTime: filterTime.value,
-        filterWorkspace: filterWorkspace.value
-    });
-
-    await loading.wrap(leaderboardClient, async (client) => {
-        leaderboard.value = await client.getLeaderboard(params);
-    })
-}
-
-onMounted(() => {
-    //fetchLeaderboard();
-});
 </script>

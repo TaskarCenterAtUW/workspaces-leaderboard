@@ -12,6 +12,17 @@ a {
     cursor: pointer;
 }
 
+#leaderboard-results a, 
+#leaderboard-results a:link, 
+#leaderboard-results a:visited {
+    color: #000;
+}
+
+#leaderboard-results thead {
+    color: #fff; 
+    background-color: #330872;
+}
+
 .table {
     --bs-table-color: initial;
     --bs-table-bg: initial;
