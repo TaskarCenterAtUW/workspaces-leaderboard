@@ -57,7 +57,7 @@ def get_profile_map():
     query = """
         SELECT c.id, n.latitude, n.longitude
         FROM changesets c 
-        INNER JOIN node n ON c.id = n.changeset_id
+        INNER JOIN nodes n ON c.id = n.changeset_id
         WHERE c.closed_at >= NOW() - INTERVAL %s AND c.user_id = %s;
     """
     

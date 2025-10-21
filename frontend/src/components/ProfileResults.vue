@@ -12,14 +12,17 @@
             </p>
         </div>
         <div class="text-center">
-            <p><h2>{{ stats.name }}</h2></p>
+            <h2>{{ stats.name }}</h2>
+        </div>
+        <div id="profile-map">
+            <app-map :workspace="curWorkspace" />
         </div>
     </div>
 </template>
 
 <script setup>
   import { defineProps, onMounted, reactive, ref } from 'vue';
-  import { leaderboardClient } from '@/services/index';
+  import { leaderboardClient, workspacesClient } from '@/services/index';
   import { LoadingContext } from '@/services/loading';
 
   const loading = reactive(new LoadingContext());
@@ -41,7 +44,7 @@
   });
 
   const stats = ref(null);
-  const map = ref([]);
+  const curWorkspace = ref(null);
 
   function updateProfileId(newValue) {
     model.value = newValue;
@@ -57,11 +60,14 @@
 
     await loading.wrap(leaderboardClient, async (client) => {
         stats.value = await client.getProfileStats(params);
-        map.value = await client.getProfileMap(params);
+    })
+
+    await loading.wrap(workspacesClient, async (client) => {
+        curWorkspace.value = await client.getWorkspace(props.filterWorkspace);
     })
   }
 
   onMounted(() => {
     fetchProfile();
-});
+  });
 </script>
