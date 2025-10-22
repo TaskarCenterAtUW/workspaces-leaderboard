@@ -1,23 +1,29 @@
 <template>
-    <div class="map-container">
+    <div id="map-container">
       <div v-show="workspaceAreaPolygon" id="map" />
-      <div v-show="!workspaceAreaPolygon" class="missing-workspace-area-notice">
-        <app-spinner v-if="loadingBbox.active" />
-        <template v-else>
-          <app-icon variant="info" size="48" />
-          <div>This workspace is empty.</div>
-        </template>
+      <div v-show="!workspaceAreaPolygon">
+        <div v-if="loadingBbox.active" class="alert alert-info" role="alert">
+          <app-spinner size="sm" />
+          Rendering map...
+        </div>
+        <div v-else class="alert alert-info" role="error">
+          No workspace area available to render map.
+        </div>
       </div>
     </div>
 </template>
 
 <script setup lang="ts">
   import { ref, reactive, watch, onMounted } from 'vue';
-  import { LoadingContext } from '@/services/loading';
   import { workspacesClient } from '@/services/index';
+  import { LoadingContext } from '@/services/loading';
   import * as L from 'leaflet';
   
   const props = defineProps({
+    mapMarkers: {
+      type: Array,
+      default: () => []
+    },
     workspace: {
       type: Object,
       default: null
@@ -49,6 +55,12 @@
       maxZoom: 19,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map.value);
+
+    props.mapMarkers.forEach((marker) => {
+      L.marker([marker.latitude, marker.longitude])
+        .addTo(map.value)
+        .bindPopup(marker.popup || '');
+    });
   }
   
   async function updateMapPreview(workspace) {
@@ -101,28 +113,3 @@
     });
   }
   </script>
-  
-  <style>
-  .dashboard-page {
-    .map-container {
-      height: 350px;
-      background-color: $gray-200;
-    }
-  
-    #map {
-      width: 100%;
-      height: 100%;
-    }
-  
-    .missing-workspace-area-notice {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: $gray-600;
-      text-align: center;
-    }
-  }
-  </style>

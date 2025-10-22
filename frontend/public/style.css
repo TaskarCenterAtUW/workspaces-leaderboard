@@ -48,8 +48,17 @@ input[type="checkbox"] {
     background-color: #e1b284;
 }
 
-#profile-map {
+#content-map {
     height: 70vh; 
-    width: 100%; 
-    position: relative;
+    width: 100%;
+}
+
+#map-container {
+    height: 100%;
+    width: 100%;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
 }

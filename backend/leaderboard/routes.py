@@ -89,7 +89,7 @@ def get_profile_stats():
     cursor.execute(schema_query, (schemaId,))
 
     query = """
-        SELECT id, display_name AS name
+        SELECT id, display_name AS name, creation_time AS created
         FROM users 
         WHERE id = %s;
     """
@@ -106,4 +106,4 @@ def get_profile_stats():
     cursor.execute(query, (id,))
     row = cursor.fetchone()
     cursor.close()
-    return jsonify({'id': row[0], 'name': row[1]})
+    return jsonify({'id': row[0], 'name': row[1], 'created': row[2]})

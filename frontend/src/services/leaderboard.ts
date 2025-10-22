@@ -35,7 +35,7 @@ export class LeaderboardClient extends BaseHttpClient implements ICancelableClie
     return (await response.json());
   }
 
-  async getProfileMap(params: URLSearchParams): Promise<any> {
+  async getProfileMapMarkers(params: URLSearchParams): Promise<any> {
     const response = await this._getSimple(`/leaderboard/profile/map/?${params.toString()}`);
 
     return (await response.json());

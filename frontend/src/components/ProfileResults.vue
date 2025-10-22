@@ -11,11 +11,21 @@
                 </a>
             </p>
         </div>
-        <div class="text-center">
-            <h2>{{ stats.name }}</h2>
+        <div class="text-center mb-4">
+            <h1 class="mb-0" style="line-height: 1;">{{ stats.name }}</h1>
+            <p class="small mb-0">joined {{ timeAgo(stats.created) }} ago</p>
         </div>
-        <div id="profile-map">
-            <app-map :workspace="curWorkspace" />
+        <div id="profile-content">
+            <ul class="nav nav-tabs" id="content-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="content-map-tab" data-bs-toggle="tab" data-bs-target="#content-map" type="button" role="tab" aria-controls="content-map" aria-selected="true">{{ timeChanges(filterTime) }}</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="content-div">
+                <div class="tab-pane fade show active" id="content-map" role="tabpanel" aria-labelledby="content-map-tab">
+                    <app-map :workspace="workspace" :mapMarkers="mapMarkers" />
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -44,7 +54,8 @@
   });
 
   const stats = ref(null);
-  const curWorkspace = ref(null);
+  const workspace = ref(null);
+  const mapMarkers = ref([]);
 
   function updateProfileId(newValue) {
     model.value = newValue;
@@ -60,14 +71,49 @@
 
     await loading.wrap(leaderboardClient, async (client) => {
         stats.value = await client.getProfileStats(params);
+        mapMarkers.value = await client.getProfileMapMarkers(params);
     })
 
     await loading.wrap(workspacesClient, async (client) => {
-        curWorkspace.value = await client.getWorkspace(props.filterWorkspace);
+        workspace.value = await client.getWorkspace(props.filterWorkspace);
     })
   }
 
   onMounted(() => {
     fetchProfile();
   });
+
+  function timeAgo(datetime) {
+    const dateObj = new Date(datetime);
+    const now = Date.now();
+    const seconds = Math.floor((now - dateObj.getTime()) / 1000);
+
+    if (seconds < 60) {
+        return "just now";
+    } else if (seconds < 3600) {
+        const minutes = Math.floor(seconds / 60);
+        return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+    } else if (seconds < 86400) {
+        const hours = Math.floor(seconds / 3600);
+        return `${hours} hour${hours > 1 ? 's' : ''}`;
+    } else if (seconds < 2592000) { // Approx 30 days
+        const days = Math.floor(seconds / 86400);
+        return `${days} day${days > 1 ? 's' : ''}`;
+    } else if (seconds < 31536000) { // Approx 365 days
+        const months = Math.floor(seconds / 2592000);
+        return `${months} month${months > 1 ? 's' : ''}`;
+    } else {
+        const years = Math.floor(seconds / 31536000);
+        return `${years} year${years > 1 ? 's' : ''}`;
+    }
+  }
+
+  function timeChanges(value) {
+    switch (value) {
+        case 'all':
+            return 'all changes';
+        default:
+            return 'changes within the last ' + value;
+    }
+  }
 </script>
