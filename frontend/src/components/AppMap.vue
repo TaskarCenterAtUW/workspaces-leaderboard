@@ -35,17 +35,7 @@
   const workspaceAreaPolygon = ref(null);
   
   onMounted(() => {
-    watch(
-      () => props.workspace,
-      (val) => {
-        if (val) {
-          updateMapPreview(val);
-        } else {
-          map.value = null;
-        }
-      },
-      { immediate: true }
-    );
+    updateMapPreview();
   });
   
   function initMap() {
@@ -63,17 +53,17 @@
     });
   }
   
-  async function updateMapPreview(workspace) {
+  async function updateMapPreview() {
     if (workspaceAreaPolygon.value) {
       workspaceAreaPolygon.value.remove();
       workspaceAreaPolygon.value = null
     }
   
-    if (!props.workspace.id) {
+    if (!props.workspace || !props.workspace.id) {
       return;
     }
   
-    await setCurrentWorkspacePolygon(workspace);
+    await setCurrentWorkspacePolygon(props.workspace);
   
     if (!workspaceAreaPolygon.value) {
       return;

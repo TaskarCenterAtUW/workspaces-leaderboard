@@ -55,9 +55,15 @@
     },
   });
 
-  watch(() => props.filterWorkspace, (newValue, oldValue) => {
-    fetchLeaderboard();
-  });
+  watch(
+      () => props,
+      (newValue, oldValue) => {
+        fetchLeaderboard();
+      },
+      {
+        deep: true
+      }
+  );
 
   function updateProfileId(newValue) {
     model.value = newValue;

@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted, computed } from 'vue';
+import { ref, watch } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 import LeaderboardResults from '@/components/LeaderboardResults.vue';
 import ProfileResults from '@/components/ProfileResults.vue';
@@ -57,5 +57,10 @@ const filterTeam = ref('individual');
 const filterTime = ref('all');
 
 const profileId = ref(null);
+
+// whenever the workspace filter changes, we need to return to the leaderboard view to prevent irrelevant profile data
+watch(filterWorkspace, (newValue, oldValue) => {
+  profileId.value = null;
+});
 
 </script>

@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-  import { defineProps, onMounted, reactive, ref } from 'vue';
+  import { defineProps, onMounted, reactive, ref, watch } from 'vue';
   import { leaderboardClient, workspacesClient } from '@/services/index';
   import { LoadingContext } from '@/services/loading';
 
@@ -52,6 +52,16 @@
         required: true,
     },
   });
+
+  watch(
+      () => props,
+      (newValue, oldValue) => {
+        fetchProfile();
+      },
+      {
+        deep: true
+      }
+);
 
   const stats = ref(null);
   const workspace = ref(null);
