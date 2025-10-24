@@ -5,7 +5,7 @@ from leaderboard.routes import leaderboard_bp
 from profile.routes import profile_bp
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:*", r"https://*.sidewalks.washington.edu"])
+CORS(app, origins=["http://localhost:*", "http://*.sidewalks.washington.edu", "https://*.sidewalks.washington.edu"])
 
 # Register the blueprints
 app.register_blueprint(leaderboard_bp, url_prefix='/api/leaderboard')

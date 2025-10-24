@@ -3,7 +3,7 @@ from flask_cors import CORS
 from extensions import get_workspace_cursor, time_to_interval
 
 leaderboard_bp = Blueprint('leaderboard', __name__)
-CORS(leaderboard_bp, origins=["http://localhost:*", r"https://*.sidewalks.washington.edu"])
+CORS(leaderboard_bp, origins=["http://localhost:*", "http://*.sidewalks.washington.edu", "https://*.sidewalks.washington.edu"])
 
 @leaderboard_bp.route('/', methods=['GET'])
 def get_leaderboard():
