@@ -35,7 +35,17 @@
   const workspaceAreaPolygon = ref(null);
   
   onMounted(() => {
-    updateMapPreview();
+    watch(
+      () => props.workspace,
+      (val) => {
+        if (val) {
+          updateMapPreview(val);
+        } else {
+          map.value = null;
+        }
+      },
+      { immediate: true }
+    );
   });
   
   function initMap() {
@@ -47,23 +57,23 @@
     }).addTo(map.value);
 
     props.mapMarkers.forEach((marker) => {
-      L.marker([marker.latitude, marker.longitude])
+      L.marker(coordsToLatLng(marker.latitude, marker.longitude))
         .addTo(map.value)
-        .bindPopup(marker.popup || '');
+        .bindPopup('Changeset Node');
     });
   }
   
-  async function updateMapPreview() {
+  async function updateMapPreview(workspace) {
     if (workspaceAreaPolygon.value) {
       workspaceAreaPolygon.value.remove();
       workspaceAreaPolygon.value = null
     }
   
-    if (!props.workspace || !props.workspace.id) {
+    if (!workspace || !workspace.id) {
       return;
     }
   
-    await setCurrentWorkspacePolygon(props.workspace);
+    await setCurrentWorkspacePolygon(workspace);
   
     if (!workspaceAreaPolygon.value) {
       return;
@@ -101,5 +111,13 @@
         ])
       }
     });
+  }
+
+  function coordsToLatLng(latitude, longitude) {
+    // Get the CRS for OpenStreetMap data format
+    var crs = L.CRS.EPSG3857;
+    var projectedPoint = L.point(latitude, longitude);
+    var result = crs.projection.unproject(projectedPoint);
+    return result;
   }
   </script>

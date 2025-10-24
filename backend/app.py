@@ -1,13 +1,15 @@
 from flask import Flask
 from flask_cors import CORS
+from extensions import close_db_connection
 from leaderboard.routes import leaderboard_bp
-from extensions import get_db_connection, close_db_connection
+from profile.routes import profile_bp
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["http://localhost:*", r"https://*.sidewalks.washington.edu"])
 
 # Register the blueprints
 app.register_blueprint(leaderboard_bp, url_prefix='/api/leaderboard')
+app.register_blueprint(profile_bp, url_prefix='/api/leaderboard/profile')
 
 # Ensure the database connection is closed after each request
 app.teardown_appcontext(close_db_connection)

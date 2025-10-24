@@ -13,7 +13,7 @@
         </div>
         <div class="text-center mb-4">
             <h1 class="mb-0" style="line-height: 1;">{{ stats.name }}</h1>
-            <p class="small mb-0">joined {{ timeAgo(stats.created) }} ago</p>
+            <p v-if="stats.created" class="small mb-0">joined {{ timeAgo(stats.created) }} ago</p>
         </div>
         <div id="profile-content">
             <ul class="nav nav-tabs" id="content-tabs" role="tablist">
@@ -61,7 +61,7 @@
       {
         deep: true
       }
-);
+  );
 
   const stats = ref(null);
   const workspace = ref(null);
