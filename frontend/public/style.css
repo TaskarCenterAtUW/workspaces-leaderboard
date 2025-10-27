@@ -1,4 +1,4 @@
-body, h1, h5 {
+body, h1, h5, .leaflet-container {
     font-family: "Courier Prime", monospace;
     font-weight: 400;
     font-style: normal;

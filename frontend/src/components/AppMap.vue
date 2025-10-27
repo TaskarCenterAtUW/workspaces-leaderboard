@@ -114,10 +114,12 @@
   }
 
   function coordsToLatLng(latitude, longitude) {
-    // Get the CRS for OpenStreetMap data format
+    /**
     var crs = L.CRS.EPSG3857;
     var projectedPoint = L.point(latitude, longitude);
     var result = crs.projection.unproject(projectedPoint);
+    */
+    var result = L.latLng(latitude / 10000000, longitude / 10000000);
     return result;
   }
   </script>

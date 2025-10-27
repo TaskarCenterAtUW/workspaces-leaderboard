@@ -12,6 +12,7 @@
             </p>
         </div>
         <div class="text-center mb-4">
+            <p v-if="props.filterTeam == 'team'" class="small mb-0">team</p>
             <h1 class="mb-0" style="line-height: 1;">{{ stats.name }}</h1>
             <p v-if="stats.created" class="small mb-0">joined {{ timeAgo(stats.created) }} ago</p>
         </div>
