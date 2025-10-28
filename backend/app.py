@@ -5,6 +5,7 @@ from leaderboard.routes import leaderboard_bp
 from profile.routes import profile_bp
 
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 CORS(app) #, origins=["http://localhost:*", "http://*.sidewalks.washington.edu", "https://*.sidewalks.washington.edu"])
 
 # Register the blueprints
