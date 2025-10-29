@@ -3,7 +3,7 @@ from flask_cors import CORS
 from extensions import get_workspace_cursor, time_to_interval
 
 profile_bp = Blueprint('profile', __name__)
-CORS(profile_bp, origins=["http://localhost:*", "https://*.sidewalks.washington.edu"])
+CORS(profile_bp) #, origins=["http://localhost:*", "https://*.sidewalks.washington.edu"])
 
 @profile_bp.route('/map/', methods=['GET'])
 def get_profile_map():
