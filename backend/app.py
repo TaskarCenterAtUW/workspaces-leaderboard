@@ -6,7 +6,7 @@ from profile.routes import profile_bp
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-CORS(app) #, origins=["http://localhost:*", "http://*.sidewalks.washington.edu", "https://*.sidewalks.washington.edu"])
+CORS(app, origins=["http://localhost:*", "https://*.sidewalks.washington.edu"])
 
 # Register the blueprints
 app.register_blueprint(leaderboard_bp, url_prefix='/api/leaderboard')
