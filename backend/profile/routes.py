@@ -46,7 +46,7 @@ def get_profile_stats():
         case "team":
             query = """
                 SELECT id, name, '' AS created
-                FROM team 
+                FROM teams
                 WHERE id = %s;
             """
         case _:

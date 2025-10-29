@@ -10,7 +10,7 @@
             <div class="col-12 col-md-4 col-lg-4 mb-3">
                 <label for="filterTeam">Show Rankings</label>
                 <select id="filterTeam" class="form-select" aria-label="Show Team or Individual Rankings" v-model="filterTeam" @change="fetchLeaderboard">
-                    <option disabled value="team">By Team</option>
+                    <option value="team">By Team</option>
                     <option value="individual">By Individual</option>
                 </select>
             </div>
@@ -57,6 +57,11 @@ const filterTeam = ref('individual');
 const filterTime = ref('all');
 
 const profileId = ref(null);
+
+// whenever the team / individual filter changes, we need to return to the leaderboard view to prevent irrelevant profile data
+watch(filterTeam, (newValue, oldValue) => {
+  profileId.value = null;
+});
 
 // whenever the workspace filter changes, we need to return to the leaderboard view to prevent irrelevant profile data
 watch(filterWorkspace, (newValue, oldValue) => {

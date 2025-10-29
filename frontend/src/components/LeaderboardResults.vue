@@ -16,7 +16,16 @@
                     <th scope="col">Rank</th>
                     <th v-if="filterTeam == 'team'" scope="col">Team</th>
                     <th v-else scope="col">Username</th>                   
-                    <th scope="col">Score</th>
+                    <th scope="col">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <span>Score</span>
+                            </div>
+                            <div>
+                                <app-icon variant="info" tooltip="Score is calculated by total nodes changed." />
+                            </div>
+                        </div>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -76,6 +85,7 @@
     }
 
     const params = new URLSearchParams({
+        filterTeam: props.filterTeam,
         filterTime: props.filterTime,
         filterWorkspace: props.filterWorkspace
     });
@@ -83,7 +93,12 @@
     await loading.wrap(leaderboardClient, async (client) => {
         updateProfileId(null);
         leaderboard.value = await client.getLeaderboard(params);
-    })
+    });
+
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
  }
 
   onMounted(() => {

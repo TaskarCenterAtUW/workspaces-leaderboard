@@ -1,5 +1,6 @@
 <template>
-  <i :class="classes" />
+  <i v-if="tooltip" :class="classes" data-bs-toggle="tooltip" :title="tooltip" />
+  <i v-else :class="classes" />
 </template>
 
 <script setup lang="ts">
@@ -17,6 +18,10 @@
     noMargin: {
       type: Boolean,
       default: false
+    },
+    tooltip: {
+      type: String,
+      default: ''
     }
   })
 
