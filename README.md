@@ -4,6 +4,10 @@
 
 ## Local Setup
 
+Workspaces Leaderboard runs under a combination of Vite, Vue 3, Flask, and Blueprints.
+
+You will need an .env file to connect to the dev DB and TDEI API.
+
 # Frontend
 ```
 docker-compose build
