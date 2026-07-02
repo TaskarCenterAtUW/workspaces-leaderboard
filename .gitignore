@@ -1,4 +1,21 @@
 frontend/node_modules/**
 frontend/dist/**
 
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Local environment files
+fastapi-backend/.env
+fastapi-backend/.env.example
+!fastapi-backend/.env.example
+
+# IDE and OS files
+.idea/
+.vscode/
 .DS_Store
