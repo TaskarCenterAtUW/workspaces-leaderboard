@@ -3,6 +3,10 @@ on:
     pull_request:
         types: [closed]
         branches: [develop, staging, production, testing]
+permissions:
+    contents: read
+    actions: write
+
 jobs:
 
     on-merge:
@@ -38,15 +42,28 @@ jobs:
     deploy-backend:
         needs: on-merge
         if: needs.on-merge.outputs.backend-changed == 'true'
-        uses: ./.github/workflows/deploy-be-to-azure.yml
-        with:
-            environment: ${{ needs.on-merge.outputs.environment }}
-        secrets: inherit
-
+        runs-on: ubuntu-latest
+        env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        steps:
+            - name: Trigger Backend Deployment Workflow
+              run: |
+                gh workflow run deploy-be-to-azure.yml \
+                    --ref ${{ github.base_ref }} \
+                    --field environment=${{ needs.on-merge.outputs.environment }}
     deploy-frontend:
         needs: on-merge
         if: needs.on-merge.outputs.frontend-changed == 'true'
-        uses: ./.github/workflows/deploy-fe-to-azure.yml
-        with:
-            environment: ${{ needs.on-merge.outputs.environment }}
-        secrets: inherit
+        runs-on: ubuntu-latest
+        env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        steps:
+            - name: Trigger Frontend Deployment Workflow
+              run: |
+                gh workflow run deploy-fe-to-azure.yml \
+                    --ref ${{ github.base_ref }} \
+                    --field environment=${{ needs.on-merge.outputs.environment }}
+        # uses: ./.github/workflows/deploy-fe-to-azure.yml
+        # with:
+        #     environment: ${{ needs.on-merge.outputs.environment }}
+        # secrets: inherit
