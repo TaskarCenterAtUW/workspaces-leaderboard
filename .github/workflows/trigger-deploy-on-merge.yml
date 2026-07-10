@@ -49,6 +49,7 @@ jobs:
             - name: Trigger Backend Deployment Workflow
               run: |
                 gh workflow run deploy-be-to-azure.yml \
+                    --repo ${{ github.repository }} \
                     --ref ${{ github.base_ref }} \
                     --field environment=${{ needs.on-merge.outputs.environment }}
     deploy-frontend:
@@ -61,6 +62,7 @@ jobs:
             - name: Trigger Frontend Deployment Workflow
               run: |
                 gh workflow run deploy-fe-to-azure.yml \
+                    --repo ${{ github.repository }} \
                     --ref ${{ github.base_ref }} \
                     --field environment=${{ needs.on-merge.outputs.environment }}
         # uses: ./.github/workflows/deploy-fe-to-azure.yml
