@@ -17,7 +17,7 @@ jobs:
               id: set-env
               run: |
                 case "${{ github.base_ref }}" in
-                    develop)    echo "environment=development" >> $GITHUB_OUTPUT ;;
+                    develop)    echo "environment=develop" >> $GITHUB_OUTPUT ;;
                     staging)    echo "environment=staging" >> $GITHUB_OUTPUT ;;
                     production) echo "environment=production" >> $GITHUB_OUTPUT ;;
                     testing)    echo "environment=testing" >> $GITHUB_OUTPUT ;;
