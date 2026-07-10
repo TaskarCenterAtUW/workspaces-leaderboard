@@ -13,6 +13,7 @@ app.register_blueprint(leaderboard_bp, url_prefix='/api/leaderboard')
 app.register_blueprint(profile_bp, url_prefix='/api/leaderboard/profile')
 
 # Ensure the database connection is closed after each request
+# Minor change in backend to ensure backend code deployment.
 app.teardown_appcontext(close_db_connection)
 
 if __name__ == '__main__':
