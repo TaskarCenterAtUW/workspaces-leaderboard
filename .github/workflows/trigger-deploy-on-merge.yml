@@ -1,0 +1,51 @@
+name: Trigger Deployment on Pull Request Merge
+on:
+    pull_request:
+        types: [closed]
+        branches: [develop, staging, production, testing]
+jobs:
+
+    on-merge:
+        if: github.event.pull_request.merged == true
+        runs-on: ubuntu-latest
+        outputs:
+            environment: ${{ steps.set-env.outputs.environment }}
+            backend-changed: ${{ steps.filter.outputs.backend }}
+            frontend-changed: ${{ steps.filter.outputs.frontend }}
+        steps:
+            - name: Map target branch to environment
+              id: set-env
+              run: |
+                case "${{ github.base_ref }}" in
+                    develop)    echo "environment=development" >> $GITHUB_OUTPUT ;;
+                    staging)    echo "environment=staging" >> $GITHUB_OUTPUT ;;
+                    production) echo "environment=production" >> $GITHUB_OUTPUT ;;
+                    testing)    echo "environment=testing" >> $GITHUB_OUTPUT ;;
+                esac
+            - name: Check which code changed
+              id: filter
+              uses: dorny/paths-filter@v3
+              with:
+                filters: |
+                    backend:
+                        - 'backend/**'
+                        - '.github/workflows/deploy-be-to-azure.yml'
+                    frontend:
+                        - 'frontend/**'
+                        - '.github/workflows/deploy-fe-to-azure.yml'
+
+    deploy-backend:
+        needs: on-merge
+        if: needs.on-merge.outputs.backend-changed == 'true'
+        uses: ./.github/workflows/deploy-be-to-azure.yml
+        with:
+            environment: ${{ needs.on-merge.outputs.environment }}
+        secrets: inherit
+
+    deploy-frontend:
+        needs: on-merge
+        if: needs.on-merge.outputs.frontend-changed == 'true'
+        uses: ./.github/workflows/deploy-fe-to-azure.yml
+        with:
+            environment: ${{ needs.on-merge.outputs.environment }}
+        secrets: inherit

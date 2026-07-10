@@ -1,0 +1,58 @@
+name: Deploy to Docker to Azure Container Registry
+on:
+    workflow_dispatch:
+        inputs:
+            environment:
+                description: 'Environment to deploy to'
+                required: true
+                default: 'development'
+                type: choice
+                options:
+                    - production
+                    - staging
+                    - development
+                    - testing
+    workflow_call:
+        inputs:
+            environment:
+                description: 'Environment to deploy to'
+                required: true
+                type: string
+jobs:
+
+    set-github-environment:
+        runs-on: ubuntu-latest
+        outputs:
+            environment: ${{ steps.set-env.outputs.target_env }}
+        steps:
+            - name: Set Environment
+              id: set-env
+              run: |
+                case "${{ inputs.environment }}" in
+                    testing)     echo "target_env=Testing" >> $GITHUB_OUTPUT ;;
+                    development) echo "target_env=dev" >> $GITHUB_OUTPUT ;;
+                    staging)     echo "target_env=stage" >> $GITHUB_OUTPUT ;;
+                    production)  echo "target_env=prod" >> $GITHUB_OUTPUT ;;
+                esac
+    build-and-deploy:
+        needs: set-github-environment
+        runs-on: ubuntu-latest
+        environment: ${{ needs.set-github-environment.outputs.environment }}
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
+              with:
+                ref: ${{ github.event.inputs.environment }}
+            - name: Login to Azure Container Registry
+              uses: azure/docker-login@v1
+              with:
+                login-server: ${{ vars.DOCKERHUB_REGISTRY }}
+                username: ${{ vars.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+            - name: Build and Push Docker Image
+              id: build-and-push
+              working-directory: ./backend
+              run: |
+                docker build -t ${{ vars.DOCKERHUB_REGISTRY }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ github.sha }} -t ${{ vars.DOCKERHUB_REGISTRY }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ needs.set-github-environment.outputs.environment }} .
+                docker push ${{ vars.DOCKERHUB_REGISTRY }}/${{ vars.DOCKERHUB_REPOSITORY }} --all-tags
+    
