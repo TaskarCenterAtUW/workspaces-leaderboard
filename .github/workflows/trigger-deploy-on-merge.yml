@@ -26,6 +26,7 @@ jobs:
               id: filter
               uses: dorny/paths-filter@v3
               with:
+                ref: ${{ github.event.pull_request.base.ref }} # check the changes against base branch only
                 filters: |
                     backend:
                         - 'backend/**'
