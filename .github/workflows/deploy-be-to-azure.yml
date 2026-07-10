@@ -5,12 +5,12 @@ on:
             environment:
                 description: 'Environment to deploy to'
                 required: true
-                default: 'development'
+                default: 'develop'
                 type: choice
                 options:
                     - production
                     - staging
-                    - development
+                    - develop
                     - testing
     workflow_call:
         inputs:
@@ -30,7 +30,7 @@ jobs:
               run: |
                 case "${{ inputs.environment }}" in
                     testing)     echo "target_env=Testing" >> $GITHUB_OUTPUT ;;
-                    development) echo "target_env=dev" >> $GITHUB_OUTPUT ;;
+                    develop) echo "target_env=dev" >> $GITHUB_OUTPUT ;;
                     staging)     echo "target_env=stage" >> $GITHUB_OUTPUT ;;
                     production)  echo "target_env=prod" >> $GITHUB_OUTPUT ;;
                 esac
